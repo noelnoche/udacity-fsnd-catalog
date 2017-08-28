@@ -94,20 +94,16 @@ Installation & Usage
 2. `cd` to the vagrant directory and run `vagrant up`.
    (Installs the Linux OS and project dependencies when first run)
 3. Run the following commands:
-
-    vagrant ssh
-    cd /vagrant
-    cd /catalog
-
+    + `vagrant ssh`  
+    + `cd /vagrant `  
+    + `cd /catalog `  
 4. Open a second terminal.
 5. `cd` to the vagrant directory.
 6. Repeat step 3.
 7. Run `redis-server`
-8. Go back to the first terminal and run:
-
-    python catalog/db_setup # do this only once
-    python run.py
-
+8. Go back to the first terminal and run:  
+    + `python catalog/db_setup` (do this only once)
+    + `python run.py`
 9. Open your web browser to `http://localhost:8000/catalog`
 
 
