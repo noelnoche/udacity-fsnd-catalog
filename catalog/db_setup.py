@@ -9,6 +9,8 @@ Run the following command from the applicaiton root directory:
 
 """
 
+import random
+import string
 from sqlalchemy import (Boolean, Column, create_engine, DateTime, ForeignKey,
                         Integer, String)
 from sqlalchemy.ext.declarative import declarative_base
@@ -17,7 +19,7 @@ from sqlalchemy.sql import func
 
 # Used for hashing passwords
 from passlib.apps import custom_app_context as pwd_context
-import random, string
+
 
 # Used for generating cryptographically signed messages (tokens)
 # https://www.tutorialspoint.com/cryptography/cryptography_digital_signatures.htm
@@ -40,7 +42,7 @@ class User(Base):
     picture = Column(String(250), nullable=True)
     public = Column(Boolean, nullable=False, default=True)
     items = relationship("Item", backref="owner", lazy="dynamic")
-
+    categories = relationship("Category", backref="owner", lazy="dynamic")
     def hash_password(self, password):
         """Hashes password during registration"""
 
