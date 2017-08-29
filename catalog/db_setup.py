@@ -53,12 +53,12 @@ class User(Base):
 
         return pwd_context.verify(password, self.password_hash)
 
-    def generate_auth_token(self, expiration=600):
-        """Serializer encrypts to hide the id of the user"""
+    # def generate_auth_token(self, expiration=600):
+    #     """Serializer encrypts to hide the id of the user"""
 
-        ser = Serializer(secret_key, expires_in=expiration)
+    #     ser = Serializer(secret_key, expires_in=expiration)
 
-        return ser.dumps({"id":self.id})
+    #     return ser.dumps({"id":self.id})
 
     @staticmethod
     def verify_auth_token(token):
