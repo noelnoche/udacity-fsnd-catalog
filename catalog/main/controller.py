@@ -129,45 +129,53 @@ def send_api_data():
     """
 
     data = {}
+    params = {}
     query = request.args.get("q")
     limit = request.args.get("limit")
-    search = request.args.get("search")
+    name = request.args.get("search")
     user_id = request.args.get("user_id")
 
-    if search is None:
-        if user_id is not None:
-            db_items = (session.query(Item).filter_by(user_id=user_id)
-                        .order_by(asc(Item.category_name)).all())
+    if name is not None:
+        params["name"] = name
+    if user_id is not None:
+        params["user_id"] = user_id
+
+    if query is not None:
+        if query.lower() == "categories":
+            db_result = (session.query(Category).filter_by(**params)
+                         .order_by(Category.name).all())
+        elif query.lower() == "items":
+            db_result = (session.query(Item).filter_by(**params)
+                         .order_by(asc(Item.category_name)).all())
         else:
-            db_items = (session.query(Item)
-                        .order_by(asc(Item.category_name)).all())
+            abort(400)
     else:
-        search = search.lower().capitalize()
+        db_result = (session.query(Item).order_by(asc(Item.category_name))
+                     .all())
 
-        if user_id is not None:
-            db_items = (session.query(Item)
-                        .filter_by(user_id=user_id, name=search)
-                        .order_by(asc(Item.category_name)).all())
-        else:
-            db_items = (session.query(Item).filter_by(name=search)
-                        .order_by(asc(Item.category_name)).all())
-
-    data_length = len(db_items)
+    data_length = len(db_result)
 
     if limit is not None and int(limit) < data_length:
         data_length = int(limit)
     if data_length > 0:
-        for item in db_items:
-            if item.owner.public is True:
-                data.setdefault(item.category_name, []).append(item.serialize)
         if query is not None:
-            if query == "categories":
-                data = data.keys()
-                data.sort()
-            if query == "items":
-                vals = data.values()
-                data = [x for li in vals for x in li]
-            data = data[:data_length]
+            if query.lower() == "categories":
+                for cat in db_result:
+                    if cat.owner.public is True:
+                        data.setdefault(cat.name, []).append(cat.serialize)
+            else:
+                for item in db_result:
+                    if item.owner.public is True:
+                        (data.setdefault(item.category_name, [])
+                         .append(item.serialize))
+
+            vals = data.values()
+            data = [x for li in vals for x in li]
+        else:
+            for item in db_result:
+                if item.owner.public is True:
+                    data.setdefault(item.category_name, []).append(item.serialize)
+
         msg = "Data found."
     else:
         msg = "No data found."
