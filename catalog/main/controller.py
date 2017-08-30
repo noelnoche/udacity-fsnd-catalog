@@ -309,7 +309,8 @@ def item_info(category_name, item_name, user_id):
             return redirect(url_for("bp_main.welcome"), code=302)
         else:
             return render_template("item_public.html", ITEM=db_item,
-                                   ITEM_IMAGE=img_src, CATEGORY=db_category)
+                                   ITEM_IMAGE=img_src, CATEGORY=db_category,
+                                   OWNER=owner)
     else:
         return render_template("item.html", ITEM=db_item, ITEM_IMAGE=img_src,
                                CATEGORY=db_category)
