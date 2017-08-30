@@ -235,12 +235,12 @@ def user_public_page(user_id, username):
                                RECENT_ITEMS=db_items, OWNER=owner)
 
 
-@bp_main.route("/<category_name>/<int:user_id>/")
+@bp_main.route("/<path:category_name>/<int:user_id>/")
 def show_category(category_name, user_id):
     """Handler for a single category view (private and public).
 
     Args:
-        category_name (str): Category value passed from the URL.
+        category_name (unicode): Category value passed from the URL.
         user_id (int): User ID value passed from the URL.
     """
 
@@ -272,13 +272,13 @@ def show_category(category_name, user_id):
                                ITEMS=db_items)
 
 
-@bp_main.route("/<category_name>/<item_name>/<int:user_id>")
+@bp_main.route("/<path:category_name>/<path:item_name>/<int:user_id>")
 def item_info(category_name, item_name, user_id):
     """Handler for item view (private and public).
 
     Args:
-        category_name (str): Category value passed from the URL.
-        item_name (str): Item value passed from the URL.
+        category_name (unicode): Category value passed from the URL.
+        item_name (unicode): Item value passed from the URL.
         user_id (int): User ID value passed from the URL.
     """
 
@@ -392,12 +392,12 @@ def create_item():
                                STATE=state)
 
 
-@bp_main.route("/item/<item_name>/<int:user_id>/edit", methods=["GET", "POST"])
+@bp_main.route("/item/<path:item_name>/<int:user_id>/edit", methods=["GET", "POST"])
 def edit_item(item_name, user_id):
     """Handler for edit item view.
 
     Args:
-        item_name (str): Item value passed from the URL.
+        item_name (unicode): Item value passed from the URL.
         user_id (id): User ID value passed from the URL.
     """
 
@@ -470,12 +470,12 @@ def edit_item(item_name, user_id):
                                CATEGORIES=db_categories, STATE=state)
 
 
-@bp_main.route("/item/<item_name>/<user_id>/delete", methods=["GET", "POST"])
+@bp_main.route("/item/<path:item_name>/<user_id>/delete", methods=["GET", "POST"])
 def delete_item(item_name, user_id):
     """Handler for delete item view.
 
     Args:
-        item_name (str): Item value passed from the URL.
+        item_name (unicode): Item value passed from the URL.
         user_id (int): User ID value passed from the URL.
     """
 
@@ -555,13 +555,13 @@ def create_category():
         return render_template("category_new.html", STATE=state)
 
 
-@bp_main.route("/category/<category_name>/<int:user_id>/edit",
+@bp_main.route("/category/<path:category_name>/<int:user_id>/edit",
                methods=["GET", "POST"])
 def edit_category(category_name, user_id):
     """Handler for edit category view.
 
     Args:
-        category_name (str): Category value passed from the URL.
+        category_name (unicode): Category value passed from the URL.
         user_id (int): User ID value passed from the URL.
     """
 
@@ -617,13 +617,13 @@ def edit_category(category_name, user_id):
                                    STATE=state)
 
 
-@bp_main.route("/category/<category_name>/<int:user_id>/delete",
+@bp_main.route("/category/<path:category_name>/<int:user_id>/delete",
                methods=["GET", "POST"])
 def delete_category(category_name, user_id):
     """Handler for delete category view.
 
     Args:
-        category_name (str): Category value passed from the URL.
+        category_name (unicode): Category value passed from the URL.
         user_id (int): User ID value passed from the URL.
     """
 
