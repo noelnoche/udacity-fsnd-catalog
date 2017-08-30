@@ -51,7 +51,7 @@ Useful links are provided in the Reference section.
 9. Click "Create".
 10. In the Credentials screen, click the credentials you just created.
 11. Add the Client ID, Client secret and project ID to the `catalog/login/client_secrets_gpl.json` file.
-12. Add the Client ID as the `client_id` value in the `login/main.html` file.
+12. Add the Client ID as the `client_id` value in the `catalog/login/templates/base/login_main.html` file.
 
 **Facebook**
 
@@ -59,7 +59,7 @@ Useful links are provided in the Reference section.
 2. Click "Add a New App".
 3. Click "Settings" on the left panel.
 4. Fill in the Display Name field.
-5. Copy the App ID and App Secret to the `catalog/loginclient_secrets_fb.json` file.
+5. Copy the App ID and App Secret to the `catalog/login/client_secrets_fb.json` file.
 6. Add the App ID as the `appId` value in the `catalog/templates/login.html` file.
 6. Under Products in the left panel click "Add Product".
 7. Choose "Facebook Login" and go its settings screen.
