@@ -23,8 +23,10 @@ from passlib.apps import custom_app_context as pwd_context
 
 # Used for generating cryptographically signed messages (tokens)
 # https://www.tutorialspoint.com/cryptography/cryptography_digital_signatures.htm
-from itsdangerous import(TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
-secret_key = "".join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+from itsdangerous import(TimedJSONWebSignatureSerializer as Serializer,
+                         BadSignature, SignatureExpired)
+secret_key = ("".join(random.choice(string.ascii_uppercase + string.digits)
+              for x in xrange(32)))
 
 
 Base = declarative_base()
@@ -43,6 +45,7 @@ class User(Base):
     public = Column(Boolean, nullable=False, default=True)
     items = relationship("Item", backref="owner", lazy="dynamic")
     categories = relationship("Category", backref="owner", lazy="dynamic")
+
     def hash_password(self, password):
         """Hashes password during registration"""
 
@@ -108,7 +111,8 @@ class Item(Base):
     image_file = Column(String(250), nullable=True, default=None)
     image_url = Column(String(250), nullable=True, default=None)
     create_date = Column(DateTime, default=func.now())
-    category_name = Column(String(80), ForeignKey("categories.name"), default="Unsorted")
+    category_name = (Column(String(80), ForeignKey("categories.name"),
+                     default="Unsorted"))
     category = relationship(Category)
     user_id = Column(Integer, ForeignKey("users.id"))
     user_id_rel = relationship("User")
@@ -126,7 +130,6 @@ class Item(Base):
             "user_id": self.user_id
         }
 
-# ----------------------------------------------------------------------
 
 engine = create_engine("sqlite:///catalog/catalog.db")
 Base.metadata.create_all(engine)

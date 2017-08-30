@@ -3,8 +3,10 @@ This module controls CRUD operations for Category and Item data.
 
 """
 
-import os, re, time
-from flask import (abort, Blueprint, flash, g, jsonify, make_response, 
+import os
+import re
+import time
+from flask import (abort, Blueprint, flash, g, jsonify, make_response,
                    redirect, render_template, request, url_for)
 from flask import session as login_session
 
@@ -103,7 +105,8 @@ class Image(object):
 #         user = session.query(User).filter_by(id=user_id).one()
 #     else:
 #         # xxx Why can't we use one() here? It returns None??
-#         user = session.query(User).filter_by(email=email_or_token).one_or_none()
+#         user = (session.query(User).filter_by(email=email_or_token)
+#                 .one_or_none())
 
 #         if not user or not user.verify_password(password):
 #             return False
@@ -174,14 +177,14 @@ def send_api_data():
         else:
             for item in db_result:
                 if item.owner.public is True:
-                    data.setdefault(item.category_name, []).append(item.serialize)
+                    data.setdefault(item.category_name,
+                                    []).append(item.serialize)
 
         msg = "Data found."
     else:
         msg = "No data found."
 
-    response = make_response(jsonify(data=data, response=msg, status="200"), 200)
-    return response
+    return make_response(jsonify(data=data, response=msg, status="200"), 200)
 
 
 @bp_main.route("/")
@@ -265,7 +268,8 @@ def show_category(category_name, user_id):
             flash("That user set their data to private.")
             return redirect(url_for("bp_main.welcome"), code=302)
         else:
-            return render_template("category_public.html", CATEGORY=db_category,
+            return render_template("category_public.html",
+                                   CATEGORY=db_category,
                                    ITEMS=db_items, OWNER=owner)
     else:
         return render_template("category.html", CATEGORY=db_category,
@@ -299,7 +303,7 @@ def item_info(category_name, item_name, user_id):
     img_src = None
     img_filename = db_item.image_file
 
-    if img_filename != None:
+    if img_filename is not None:
         user_img = Image(BASE_URL, user_id, img_filename)
         img_src = user_img.path_html
 
@@ -349,14 +353,15 @@ def create_item():
         img_path_loc = None
         img_path_url = None
 
-        if Image.valid_img_request(img_obj) and Image.valid_img_file(img_obj.filename):
+        if (Image.valid_img_request(img_obj) and
+                Image.valid_img_file(img_obj.filename)):
             new_imgfile = secure_filename(img_obj.filename)
 
             # Check if and image file with that name already exists
             dup = (session.query(Item)
                    .filter_by(user_id=user_id, image_file=new_imgfile).count())
             if dup != 0:
-                msg = "<strong>There is a file with that name already.</strong>"
+                msg = "<strong>That file already exists.</strong>"
                 return make_response(msg, 200)
 
             imginst = Image(BASE_URL, user_id, new_imgfile)
@@ -393,7 +398,8 @@ def create_item():
                                STATE=state)
 
 
-@bp_main.route("/item/<path:item_name>/<int:user_id>/edit", methods=["GET", "POST"])
+@bp_main.route("/item/<path:item_name>/<int:user_id>/edit",
+               methods=["GET", "POST"])
 def edit_item(item_name, user_id):
     """Handler for edit item view.
 
@@ -409,7 +415,8 @@ def edit_item(item_name, user_id):
     try:
         db_item = (session.query(Item)
                    .filter_by(user_id=user_id, name=item_name).one())
-        db_categories = session.query(Category).filter_by(user_id=user_id).all()
+        db_categories = (session.query(Category).filter_by(user_id=user_id)
+                         .all())
     except NoResultFound:
         msg = ("<strong>Item data not found. That user may have deleted"
                "their account.</strong>")
@@ -439,7 +446,7 @@ def edit_item(item_name, user_id):
             fm_name = "No title ({}|{})".format(user_id, int(time.time()))
 
         # Remove old image file before updating
-        if db_item.image_file != None:
+        if db_item.image_file is not None:
             old_imginst = Image(BASE_URL, user_id, db_item.image_file)
             old_imgfile = old_imginst.path_local
             os.remove(old_imgfile)
@@ -448,7 +455,8 @@ def edit_item(item_name, user_id):
         img_path_loc = None
         img_path_url = None
 
-        if Image.valid_img_request(img_obj) and Image.valid_img_file(img_obj.filename):
+        if (Image.valid_img_request(img_obj) and
+                Image.valid_img_file(img_obj.filename)):
             new_imgfile = secure_filename(img_obj.filename)
             imginst = Image(BASE_URL, user_id, new_imgfile)
             img_path_loc = imginst.path_local
@@ -471,7 +479,8 @@ def edit_item(item_name, user_id):
                                CATEGORIES=db_categories, STATE=state)
 
 
-@bp_main.route("/item/<path:item_name>/<user_id>/delete", methods=["GET", "POST"])
+@bp_main.route("/item/<path:item_name>/<user_id>/delete",
+               methods=["GET", "POST"])
 def delete_item(item_name, user_id):
     """Handler for delete item view.
 
@@ -504,7 +513,7 @@ def delete_item(item_name, user_id):
             return redirect(url_for("bp_main.welcome"), code=302)
 
         # Delete the image file in Uploads/< user_id >
-        if db_item.image_file != None and db_item.image_url != None:
+        if db_item.image_file is not None and db_item.image_url is not None:
             imginst = Image(BASE_URL, user_id, db_item.image_file)
             img_path_loc = imginst.path_local
             os.remove(img_path_loc)
@@ -614,8 +623,8 @@ def edit_category(category_name, user_id):
             return redirect(url_for("bp_main.welcome"), code=302)
         else:
             return render_template("category_edit.html",
-                                   CATEGORY_NAME=category_name, USER_ID=user_id,
-                                   STATE=state)
+                                   CATEGORY_NAME=category_name,
+                                   USER_ID=user_id, STATE=state)
 
 
 @bp_main.route("/category/<path:category_name>/<int:user_id>/delete",

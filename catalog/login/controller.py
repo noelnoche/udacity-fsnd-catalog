@@ -3,10 +3,14 @@ This module contains functions for user login and various signup methods.
 
 """
 
-import json, random, string, re, os
+import json
+import random
+import string
+import re
+import os
 import requests
-from flask import (abort, Blueprint, flash, g, jsonify, make_response, redirect,
-                   render_template, request, url_for)
+from flask import (abort, Blueprint, flash, g, jsonify, make_response,
+                   redirect, render_template, request, url_for)
 from flask import session as login_session
 from catalog.db_setup import User, Category
 from catalog.connection_manager import DBSession
@@ -20,8 +24,15 @@ from oauth2client.client import OAuth2Credentials
 # Twitter specific
 # https://github.com/joestump/python-oauth2
 import oauth2 as oauth
-import base64, time, urllib, urlparse
+import base64
+import time
+import urllib
+import urlparse
 
+# For standard login validation
+USER_RE = re.compile(r"^[a-zA-Z0-9_]{7,20}$")
+EMAIL_RE = re.compile(r"^[\S]+@[\S]+\.[\S]+$")
+PASS_RE = re.compile(r"^.{12,24}$")
 
 # Login now accessed in other modules via @bp_login.route(URL)
 bp_login = Blueprint("bp_login", __name__, template_folder="templates")
@@ -144,7 +155,6 @@ def purge_session():
     return True
 
 
-USER_RE = re.compile(r'^[a-zA-Z0-9_]{7,20}$')
 def valid_username(username):
     """Checks if username meets conditions.
 
@@ -155,7 +165,6 @@ def valid_username(username):
     return username and USER_RE.match(username)
 
 
-EMAIL_RE = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
 def valid_email(email):
     """Checks if email is valid.
 
@@ -166,7 +175,6 @@ def valid_email(email):
     return EMAIL_RE.match(email)
 
 
-PASS_RE = re.compile(r'^.{12,24}$')
 def valid_password(password):
     """Checks if password is between 12-24 characters in length.
 
@@ -207,14 +215,14 @@ def signup():
         fm_passd_cnf = request.form["fm_passd_cnf"]
         db_records = session.query(User).filter_by(email=fm_email).count()
 
-        if (fm_username == "" or fm_email == "" or fm_email_cnf == ""
-                or fm_passd == "" or fm_passd_cnf == ""):
+        if (fm_username == "" or fm_email == "" or fm_email_cnf == "" or
+                fm_passd == "" or fm_passd_cnf == ""):
             has_error = True
             errors["err_fields"] = "Please fill in all fields."
         if not valid_username(fm_username):
             has_error = True
-            msg = ("Username must be between 7 and 20 alphanumeric characters. "
-                   "Underscores are permitted.")
+            msg = ("Username must be between 7 and 20 alphanumeric "
+                   "characters. Underscores are permitted.")
             errors["err_username"] = msg
         if not valid_email(fm_email):
             has_error = True
@@ -380,7 +388,7 @@ def user_settings():
                 errors["err_email"] = "Your email is not valid."
             if skip_passd is False and not valid_password(fm_passd):
                 has_error = True
-                msg = "Your password should be between 12 and 24 characters long."
+                msg = "Password should be between 12 and 24 characters long."
                 errors["pass_len"] = msg
             if (fm_email != fm_email_cnf) or (fm_passd != fm_passd_cnf):
                 has_error = True
@@ -413,8 +421,9 @@ def user_settings():
             state = login_session["state"] = gen_csrf_token()
             return render_template("settings.html", STATE=state, MSG="",
                                    USERNAME=user.username, EMAIL=user.email,
-                                   EMAIL_CNF=user.email, PASSD="", PASSD_CNF="",
-                                   USERID=user.id, PUBLIC=user.public,
+                                   EMAIL_CNF=user.email, PASSD="",
+                                   PASSD_CNF="", USERID=user.id,
+                                   PUBLIC=user.public,
                                    PROVIDER=provider, ERRORS={})
 
 
@@ -535,8 +544,8 @@ def connect_gpl():
 
     # Pass as parameter to gain user account authorization
     access_token = credentials.access_token
-    auth_url = ("https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}"
-                .format(access_token))
+    auth_url = ("https://www.googleapis.com/oauth2/v1/tokeninfo?"
+                "access_token={}".format(access_token))
     auth_data = requests.get(auth_url)
     auth_obj = json.loads(auth_data.text)
 
@@ -602,8 +611,8 @@ def connect_fb():
 
     client_id = json.loads(open("catalog/login/client_secrets_fb.json", "r")
                            .read())["web"]["app_id"]
-    client_secret = json.loads(open("catalog/login/client_secrets_fb.json", "r")
-                               .read())["web"]["app_secret"]
+    client_secret = (json.loads(open("catalog/login/client_secrets_fb.json",
+                                     "r").read())["web"]["app_secret"])
 
     exchange_token = request.data
 
@@ -662,14 +671,15 @@ def auth_request(endpoint, method, fname="", body=""):
     state = gen_csrf_token()
 
     # Grab some values for params and oauth
-    consumer_key = json.loads(open("catalog/login/client_secrets_twt.json", "r")
-                              .read())["web"]["consumer_key"]
+    consumer_key = (json.loads(open("catalog/login/client_secrets_twt.json",
+                                    "r").read())["web"]["consumer_key"])
     consumer_key_sec = json.loads(open("catalog/login/client_secrets_twt.json",
                                        "r").read())["web"]["client_secret"]
     oauth_token = json.loads(open("catalog/login/client_secrets_twt.json", "r")
                              .read())["web"]["access_token"]
-    oauth_token_sec = json.loads(open("catalog/login/client_secrets_twt.json",
-                                      "r").read())["web"]["access_token_secret"]
+    oauth_token_sec = (json.loads(
+        open("catalog/login/client_secrets_twt.json", "r")
+        .read())["web"]["access_token_secret"])
 
     # Parameters required to make an authorized Twitter request
     params = {}
@@ -721,10 +731,11 @@ def auth_request(endpoint, method, fname="", body=""):
             auth_header += ", "
 
     # Need to encode the header data
-    header = urllib.urlencode({"Authorization":auth_header})
+    header = urllib.urlencode({"Authorization": auth_header})
 
     client = oauth.Client(consumer, token)
-    data = client.request(endpoint, method=method, body=body, headers=header)[1]
+    data = client.request(endpoint, method=method, body=body,
+                          headers=header)[1]
     return data
 
 
@@ -764,7 +775,8 @@ def connect_twt():
 
         # Now with the authorized request made, we can use the oauth_token
         # and send the redirect url to the authorization page to client
-        result = requests.get(authenticate_url, params={"oauth_token": oauth_token})
+        result = requests.get(authenticate_url,
+                              params={"oauth_token": oauth_token})
 
         # http://docs.python-requests.org/en/latest/api/
         # Return the redirect url for authenticate page
@@ -783,7 +795,7 @@ def connect_twt():
         response = make_response(jsonify(response=msg), 401)
         return response
 
-# xxx
+
 @bp_login.route("/auth_twt", methods=["GET"])
 def auth_twt():
     """Callback for Twitter authorization to get an access token"""
@@ -801,7 +813,6 @@ def auth_twt():
         oauth_token_secret = request.args.get("oauth_token_secret")
         login_session["twt_token_secret"] = oauth_token_secret
 
-        # token_data = auth_request(access_token_url, "GET", "auth_twt", req_body)
         auth_request(access_token_url, "GET", "auth_twt", req_body)
         user_cred_url = ("https://api.twitter.com/1.1/account/"
                          "verify_credentials.json?include_email=true")

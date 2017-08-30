@@ -17,4 +17,4 @@ app.register_blueprint(bp_rlimit, url_prefix="/rlimit")
 
 # For file upload feature
 app.config["UPLOAD_FOLDER"] = "catalog/static/uploads"
-app.config["MAX_CONTENT_LENGTH"] = 1 * 1024 * 1024 # Restrict file size to 1MB
+app.config["MAX_CONTENT_LENGTH"] = 1 * 1024 * 1024  # Restrict file size to 1MB

@@ -59,7 +59,7 @@ def get_view_rate_limit():
 # Notifies the client that they reached their limit
 # 429 means too many requests
 def on_over_limit(limit):
-    return (jsonify({"data":"You hit the rate limit", "error":"429"}), 429)
+    return (jsonify({"data": "You hit the rate limit", "error": "429"}), 429)
 
 
 # Wrap around a decorator
@@ -85,6 +85,7 @@ def rate_limiter(limit, per=300, send_x_headers=True,
             return f(*args, **kwargs)
         return update_wrapper(rate_limited, f)
     return decorator
+
 
 # Append the number of remaining requests, the limit for that endpoint
 # and time until limit resets in teh header of each request
