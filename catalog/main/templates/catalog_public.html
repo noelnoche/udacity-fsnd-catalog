@@ -38,7 +38,7 @@
 
         {% for i in RECENT_ITEMS %}
         <a href="{{ url_for('bp_main.item_info', category_name=i.category_name, item_name=i.name, user_id=i.user_id)}}">
-            <h3>{{ i.name }}</h3><span>{{ i.create_date }}</span>
+            <h3>{{ i.name }}<span class="tag"> &mdash; {{ i.create_date }}</span></h3>
         </a>
         {% endfor%}
     </div>
