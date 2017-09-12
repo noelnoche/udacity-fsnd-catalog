@@ -18,4 +18,6 @@ if __name__ == "__main__":
     # and running `os` then `os.urandom(24)`
     # Be aware that if the key is too long, it could cause session errors.
     app.secret_key = "long_and_complex_key"
+
+    # Do not use `run()` in a production setting.
     app.run(host="0.0.0.0", port=8000)
