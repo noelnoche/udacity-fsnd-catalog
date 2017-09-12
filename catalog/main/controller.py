@@ -3,6 +3,7 @@ This module controls CRUD operations for Category and Item data.
 
 """
 
+import json
 import os
 import re
 import time
@@ -202,7 +203,12 @@ def welcome():
                                RECENT_ITEMS=db_items)
     else:
         state = login_session["state"] = login_utils.gen_csrf_token()
-        return render_template("login.html", STATE=state)
+        gpl_id = json.loads(open("catalog/login/client_secrets_gpl.json", "r")
+                            .read())["web"]["client_id"]
+        fb_id = json.loads(open("catalog/login/client_secrets_fb.json", "r")
+                           .read())["web"]["app_id"]
+        return render_template("login.html", STATE=state,
+                               GPL_ID=gpl_id, FB_ID=fb_id)
 
 
 @bp_main.route("/<username>/<int:user_id>")
