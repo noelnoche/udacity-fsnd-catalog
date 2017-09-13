@@ -94,15 +94,15 @@ Installation & Usage
    (Installs the Linux OS and project dependencies when first run)
 3. Run the following commands:
     + `vagrant ssh`  
-    + `cd /vagrant `
+    + `cd /vagrant`
 4. Open a second terminal.
 5. `cd` to the vagrant directory.
 6. Repeat step 3.
-7. Run `redis-server`
+7. Run `redis-server`.
 8. Go back to the first terminal and run:  
     + `python catalog/db_setup.py` (do this only once)
     + `python run.py`
-9. Open your web browser to `http://localhost:8000/catalog`
+9. Open your web browser to `http://localhost:8000/catalog`.
 
 
 API: Request/Response Details
@@ -122,11 +122,11 @@ API: Optional Parameters
 
 | Parameter | Value | Action |
 | --- | --- | --- |
-| None | N/A | Returns all items grouped by category |  
-| user_id | < number > | Restricts data to a specific user |  
-| q | categories or items | Returns only categories or items respectively |  
-| search | < item name > | Find a specific item by name |  
-| limit | < number > | Limits the number of results |  
+| None | N/A | Returns all items grouped by category. |  
+| user_id | < number > | Restricts data to a specific user. |  
+| q | categories or items | Returns only categories or items respectively. |  
+| search | < item name > | Find a specific item by name. |  
+| limit | < number > | Limits the number of results. |  
 
 
 API: Request & Response Example
