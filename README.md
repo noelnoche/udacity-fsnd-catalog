@@ -2,6 +2,7 @@ Catalog
 ===
 <br>
 
+
 Synopsis
 ---
 Catalog is a basic information organizing web service with a clean and 
@@ -17,7 +18,7 @@ concepts used in full stack projects, including:
 
 Demo link
 ---
-[https://www.youtube.com/watch?v=dcgpyX5Ld94&feature=youtu.be](https://www.youtube.com/watch?v=dcgpyX5Ld94&feature=youtu.be)
+https://www.youtube.com/watch?v=dcgpyX5Ld94&feature=youtu.be
 
 
 Requirements
