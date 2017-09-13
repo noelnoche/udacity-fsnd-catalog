@@ -16,7 +16,7 @@ concepts used in full stack projects, including:
 5. RESTful API
 
 
-Demo link
+Demo Link
 ---
 https://www.youtube.com/watch?v=dcgpyX5Ld94&feature=youtu.be
 
@@ -105,7 +105,7 @@ Installation & Usage
 9. Open your web browser to `http://localhost:8000/catalog`.
 
 
-API: Request/Response Details
+API: Request & Response Details
 ---
 
 |     |     |
